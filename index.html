@@ -88,20 +88,234 @@
   </main>
 
   <script>
-    let form = document.querySelector('form');
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      let output = document.querySelector('output');
-      let firstNum = document.querySelector('#first-num').value;
-      let secondNum = document.querySelector('#second-num').value;
-      let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
-    });
+    //let form = document.querySelector('form');
+    //form.addEventListener('submit', e => {
+    // e.preventDefault();
+    //  let output = document.querySelector('output');
+    //  let firstNum = document.querySelector('#first-num').value;
+    //  let secondNum = document.querySelector('#second-num').value;
+    //  let operator = document.querySelector('#operator').value;
+    //  output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+    //});
 
-    let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
+    //let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
     // Start your code here
     // You may move this JS to another file if you wish
+
+    // step 5 The Global Error handler and 3rd Party Tracking
+    window.onerror = function (message, source, lineno, colno, error) {
+      console.log('Global Error caught by window.onerror:');
+      console.log(' Message:', message);
+      console.log(' Source:', source);
+      console.log(' Line:', lineno, ' Column:', colno);
+      console.log(' Error object:', error);
+      return true; // Prevents the firing of the default event handler
+    };
+
+    // step 4 error classes
+    // Empty input
+    class EmptyInputError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = 'EmptyInputError';
+      }
+    }
+    // invalid num
+    class InvalidNumberError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = 'InvalidNumberError';
+      }
+    }
+
+    // division by zero
+    class DivisionByZeroError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = 'DivisionByZeroError';
+      }
+    }
+
+    // invalid operator
+    class InvalidOperatorError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = 'InvalidOperatorError';
+      }
+    }
+
+    //step 2
+    // Select all buttons in the error-btns section and destructure them into an array
+    const buttons = Array.from(document.querySelectorAll('#error-btns > button'));
+
+    buttons.forEach((btn, index) => {
+      btn.addEventListener('click', () => {
+        switch (index) {
+          case 0: // Console Log
+            console.log('Button clicked: Console Log', { timestamp: new Date() });
+            break;
+          case 1: // Console Error
+            console.error('Error message from button click');
+            break;
+          case 2: // Console Count
+            console.count('Counted this many times:');
+            break;
+          case 3: // Console Warn
+            console.warn('This is a console warning message.');
+            break;
+          case 4: // Console Assert
+            console.assert(false, 'This is an assertion failure message.');
+            break;
+          case 5: // Console Clear
+            console.clear();
+            break;
+          case 6: // Console Dir
+            console.dir(document.querySelector('form'));
+            console.log('Form element details logged to console.');
+            break;
+          case 7: // Console Dirxml
+            console.dirxml(document.body);
+            console.log('Document body structure logged to console.');
+            break;
+          case 8: // Console Group Start
+            console.group('Start of group');
+            console.log('Group content');
+            break;
+          case 9: // Console Group End
+            console.groupEnd();
+            console.log('End of group');
+            break;
+          case 10: // Console Table
+            const users = [{ name: 'Alice', age: 25 }, { name: 'Bob', age: 30 }];
+            console.table(users);
+            console.log('User data displayed in a table format.');
+            break;
+          case 11: // Start Timer
+            console.time('Timer started');
+            console.log('Timer started for performance measurement.');
+            break;
+          case 12: // End Timer
+            console.timeEnd('Timer started');
+            console.log('Timer ended, performance measurement completed.');
+            break;
+          case 13: // Console Trace
+            function traceA() {
+              function traceB() {
+                function traceC() {
+                  console.trace('Trace from nested function');
+                }
+                traceC();
+              }
+              traceB();
+            }
+            traceA();
+            break;
+
+          case 14: // Trigger a Global Error
+            nonExistentFunction(); // This will throw a ReferenceError
+            break;
+        }
+      });
+    });
+
+
+    //step 3 error calculator using try/catch/finally & throw
+    const form = document.querySelector('form');
+
+    form.addEventListener('submit', event => {
+      event.preventDefault();
+
+      const firstStr = document.querySelector('#first-num').value.trim();
+      const secondStr = document.querySelector('#second-num').value.trim();
+      const operator = document.querySelector('#operator').value;
+      const output = document.querySelector('output');
+
+      try {
+        // check if inputs is empty
+        if (firstStr === '' || secondStr === '') {
+          throw new EmptyInputError('Both inputs must be numbers.');
+        }
+
+        // check if inputs are not numbers
+        const firstNum = Number(firstStr);
+        const secondNum = Number(secondStr);
+        if (isNaN(firstNum) || isNaN(secondNum)) {
+          throw new InvalidNumberError('Both inputs must be valid numbers.');
+        }
+
+        // check for division by zero
+        if (operator === '/' && secondNum === 0) {
+          throw new DivisionByZeroError('Division by zero is not allowed.');
+        }
+
+        // perform the calculation
+        let result;
+        switch (operator) {
+          case '+':
+            result = firstNum + secondNum;
+            break;
+          case '-':
+            result = firstNum - secondNum;
+            break;
+          case '*':
+            result = firstNum * secondNum;
+            break;
+          case '/':
+            result = firstNum / secondNum;
+            break;
+          default:
+            throw new InvalidOperatorError('Invalid operator selected.');
+        }
+
+        // display the result
+        output.innerText = result;
+      } catch (err) {
+        if (err instanceof EmptyInputError) {
+          console.error('EmptyInputError:', err.message);
+          output.innerText = `Error: ${err.message}`;
+        } else if (err instanceof InvalidNumberError) {
+          console.error('InvalidNumberError:', err.message);
+          output.innerText = `Error: ${err.message}`;
+        } else if (err instanceof DivisionByZeroError) {
+          console.error('DivisionByZeroError:', err.message);
+          output.innerText = `Error: ${err.message}`;
+        } else if (err instanceof InvalidOperatorError) {
+          console.error('InvalidOperatorError:', err.message);
+          output.innerText = `Error: ${err.message}`;
+        } else {
+          // handle specific error types
+          console.error('Calculation error:', err.message);
+          output.innerText = `Error: ${err.message}`;
+        }
+      } finally {
+        // whatever happens, this will run
+        console.log('Calculation attempt completed.');
+      }
+    });
+
+
+    // step 5 integrate with 3rd party tracking
+    (function(i,s,o,g,r,a,m){
+      i['TrackJSObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)
+      };
+      a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];
+      a.async=1;
+      a.src=g;
+      m.parentNode.insertBefore(a,m);
+      })(
+        window,
+        document,
+        'script',
+        'https://cdn.trackjs.com/releases/current/tracker.js',
+        'trackJs'
+      );
+      trackJs('install',{
+        token: 'YOUR_TRACKJS_TOKEN',
+        application: 'Lab 9 Error Calculator'
+    });
   </script>
 </body>
 
