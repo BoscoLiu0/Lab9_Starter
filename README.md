@@ -14,7 +14,7 @@ A simple demo of:
 
 2. **Error Calculator**  
    Enter two numbers and an operator (`+`, `-`, `*`, `/`). Errors (empty input, NaN, divide-by-zero, invalid operator) are caught and shown below.  
-   ![Error Calculator Demo](img/Error + Calculator.jpg)
+   ![Error Calculator Demo](img/Error_Calculator.jpg)
 
 3. **Global Error Capture (`window.onerror`)**  
    Clicking “Trigger a Global Error” calls an undefined function, and `window.onerror` logs the details in the console.  
@@ -24,4 +24,5 @@ A simple demo of:
    After adding TrackJS, we manually run `TrackJS.track('Testing TrackJS!')` and click “Trigger a Global Error” again. The TrackJS dashboard shows both the custom message and the ReferenceError.  
    ![TrackJS Errors List](img/Testing_TrackJS.jpg)
 
-## Live : https://boscoliu0.github.io/Lab9_Starter/
+## link : 
+https://boscoliu0.github.io/Lab9_Starter/
